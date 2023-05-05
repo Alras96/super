@@ -1,0 +1,210 @@
+{% extends "bill_app/layout.html" %} {% load static %} {% block content %}
+
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-body">
+      <div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-6">
+                <p class="bill_title">
+                  FROM&nbsp;:
+                </p>
+              </div>
+              <div class="col-6">
+                <p class="bill_value">
+                  {{get_invoice.user.username}}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6"></div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-6">
+                <p class="bill_title">
+                  bill&nbsp;no&nbsp;:
+                </p>
+              </div>
+              <div class="col-6">
+                <p class="bill_value">
+                  {{get_invoice.sales_bill_no}}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-6">
+                <p class="bill_title">
+                  bill&nbsp;Date&nbsp;&&nbsp;Time:
+                </p>
+              </div>
+              <div class="col-6">
+                <p class="bill_value">
+                  {{get_invoice.created_at|date:"d/m/Y"}}&nbsp;,&nbsp;{{get_invoice.created_at|date:"g:i a"}}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-6">
+                <p class="bill_title">
+                  bill&nbsp;Type&nbsp;:
+                </p>
+              </div>
+              <div class="col-6">
+                <p class="bill_value">
+                  {{get_invoice.payment_type}}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-6">
+                <p class="bill_title">
+                  Total&nbsp;Amount&nbsp;:
+                </p>
+              </div>
+              <div class="col-6">
+                <p class="bill_value">
+                  {{get_invoice.grand_total}}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-6">
+                <p class="bill_title">
+                  total items :
+                </p>
+              </div>
+              <div class="col-6">
+                <p class="bill_value">
+                  {{get_invoice.total_items|floatformat}}&nbsp;
+                </p>
+              </div>
+            </div>
+          </div> 
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-6">
+                <p class="bill_title">
+                  amount&nbsp;received&nbsp;:
+                </p>
+              </div>
+              <div class="col-6">
+                <p class="bill_value">
+                  {{get_invoice.amount_received}}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-6">
+                <p class="bill_title">
+                  savings :
+                </p>
+              </div>
+              <div class="col-6">
+                <p class="bill_value">
+                 &nbsp;{{get_invoice.savings}}
+                </p>
+              </div>
+            </div>
+          </div> 
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-6">
+                <p class="bill_title">
+                 balance&nbsp;return&nbsp;:
+                </p>
+              </div>
+              <div class="col-6">
+                <p class="bill_value">
+                  {{get_invoice.balance_return}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+       
+
+       
+
+      
+      </div>
+      <div class="card">
+        <div class="card-header bg-dark text-center text-light card_head">
+          View Bill product
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table
+              class="text-center table table-striped table-bordered"
+              id="view_bill_table"
+            >
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Barcode&nbsp;No</th>
+                  <th>Brand</th>
+                  <th>Product&nbsp;Name</th>
+                  <th>Quantity</th>
+                  <th>MRP</th>
+                  <th>Price</th>
+                  <th>Total&nbsp;Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sales_product in sales_product_object %}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  {% if sales_product.product %}
+                  <td>{{sales_product.product.barcode_no}}</td>
+                  <td>{{sales_product.product.brand}}</td>
+                  <td>{{sales_product.product.product_name}}</td>
+                  {% else %}
+                    <td></td>
+                    <td></td>
+                    <td>{{sales_product.enter_product}}</td>
+                  {% endif %}
+                  {% comment %} <td>{{sales_product.product.barcode_no}}</td>
+                  <td>{{sales_product.product.brand}}</td>
+                  <td>{{sales_product.product.product_name}}</td> {% endcomment %}
+                  <td>{{sales_product.sale_quantity|floatformat}}</td>
+                  <td>{{sales_product.mrp}}</td>
+                  <td>{{sales_product.price}}</td>
+                  <td>{{sales_product.total_amount}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="text-center my-3">
+    <button type="button" class="btn mx-2 btn-outline-info btn-sm" onclick="history.back()">Back</button>
+  </div>
+
+
+</div>
+{% endblock content %}
+
+ {% block script %} 
+
+ $(document).ready(function () {
+$("#view_bill_table").DataTable(); }); 
+
+{% endblock script %}

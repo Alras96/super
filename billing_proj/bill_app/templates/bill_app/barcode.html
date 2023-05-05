@@ -1,0 +1,325 @@
+{% extends "bill_app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+    <div class="container-fluid mt-3">
+     
+      <div class="card table_card">
+        <!-- <div class="card-header card_head">
+View Product
+        </div> -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table text-center table-bordered" id="view_products_table">
+                  <thead class="table_head">
+                    <tr>
+                      <th>S.No</th>
+                      <th>Barcode No</th>
+                      <th>Brand</th>
+                      <th>Product Name</th>
+                      <th>Total Quantity</th>
+                      <!-- <th>Units</th> -->
+                      <th>Stock Quantity</th>
+                      <th>Sold Quantity</th>
+                      <th>Product Quantity</th>
+                      <!-- <th>Units</th> -->
+                      <th>MRP</th>
+                      <th>Sale Amount</th>
+                      <th>Manufacture Date</th>
+                      <th>Expiry Date</th>
+                      {% if user.is_role == 'Admin' or user.is_staff %}
+                        <th>Purchase Amount</th>
+                      {% else %}
+                      {% endif %}
+                      <th>Status</th>
+                      <!-- <th>image</th> -->
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for product in all_products %}
+                      <tr {% if product.stock_quantity <= 0 %} style="color: red;" {% elif product.expiry %} style="color: red;" {% else %} {% endif %}>
+                        <td>{{forloop.counter}}</td>
+                        <td><img src="{{ product.generate_product.barcode.url }}" alt="check" style="width: 60px;height: 50px;"></td>
+                        <!-- <td>{{product.barcode_no}}</td> -->
+                        <td>{{product.brand}}</td>
+                        <td>{{product.product_name}}</td>
+                        <td>{{product.total_quantity|floatformat}}&nbsp;&nbsp;{{product.tq_units}}</td>
+                        <!-- <td>{{product.tq_units}}</td> -->
+                        <td {% if product.stock_quantity <= 20 %} style="color: red;" {% else %} {% endif %}>{{product.stock_quantity|floatformat}}&nbsp;&nbsp;{{product.tq_units}}</td>
+                        <td>{{product.sold_quantity|floatformat}}&nbsp;&nbsp;{{product.tq_units}}</td>
+                        <td>{{product.product_quantity|floatformat}}&nbsp;&nbsp;{{product.q_measurements}}</td>
+                        <!-- <td>{{product.q_measurements}}</td> -->
+                        <td>{{product.mrp|default_if_none:''}}</td>
+                        <td>{{product.sale_price}}</td>
+                        <td>{{product.manufacture_date|date:'d-m-Y'}}</td>
+                        <td>{{product.expiry_date|date:'d-m-Y'}}</td>
+                        {% if user.is_role == 'Admin' or user.is_staff %}
+                          <td>{{product.purchase_amount}}</td>
+                        {% else %}
+                        {% endif %}
+
+                        <!-- {% if product.status and product.expiry and product.out_of_stock %}
+                          <td class="text-danger">Expired&nbsp;&&nbsp;stock&nbsp;out</td>
+                        {% elif product.status and product.out_of_stock %}
+                            <td class="text-danger">Out&nbsp;of&nbsp;stock</td>
+                        {% elif product.status and product.expiry %}
+                            <td class="text-danger">Expired</td>
+                        {% elif product.status %}
+                          <td class="text-success">Live</td>
+                        {% elif product.out_of_stock and product.expiry %}
+                          <td class="text-danger">Expired&nbsp;&&nbsp;stock&nbsp;out</td>
+                        {% elif product.expiry %}
+                          <td class="text-danger">Expired</td>
+                        {% elif product.out_of_stock %}
+                          <td class="text-danger">Out&nbsp;of&nbsp;stock</td>
+                        {% else %}
+                            <td class="text-danger">Not</td>
+                        {% endif %} -->
+
+                        {% if product.status and product.expiry and product.out_of_stock %}
+                        <td class="text-danger">Expired&nbsp;&&nbsp;stock&nbsp;out</td>
+                        {% elif product.status and product.out_of_stock %}
+                            <td class="text-danger">Out&nbsp;of&nbsp;stock</td>
+                        {% elif product.status and product.expiry %}
+                            <td class="text-danger">Expired</td>
+                        {% elif product.status %}
+                          <td class="text-success">Live</td>
+                        {% elif not product.status and product.out_of_stock and product.expiry %}
+                        <td class="text-warning">Expired&nbsp;&&nbsp;stock&nbsp;out&nbsp;&&nbsp;Notlive</td>
+                        {% elif not product.status and product.out_of_stock %}
+                        <td class="text-warning">Stock&nbsp;out&nbsp;&&nbsp;Notlive</td>
+                        {% elif not product.status and product.expiry %}
+                        <td class="text-warning">Expired&nbsp;&&nbsp;Notlive</td>
+                        {% elif product.out_of_stock and product.expiry %}
+                          <td class="text-danger">Expired&nbsp;&&nbsp;stock&nbsp;out</td>
+                        {% elif product.expiry %}
+                          <td class="text-danger">Expired</td>
+                        {% elif product.out_of_stock %}
+                          <td class="text-danger">Out&nbsp;of&nbsp;stock</td>
+                        {% else %}
+                            <td class="text-danger">Not</td>
+                        {% endif %}
+
+                        <!-- <td><img src="{{ product.generate_product.barcode.url }}" alt="check" style="width: 60px;height: 50px;"></td> -->
+
+                        
+                          <td>
+                            <div class="d-flex">
+                            {% if user.is_role == 'Admin' or user.is_staff %}
+                              <form action="{% url 'edit_page_view' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" id="" value="{{product.id}}">
+                                <input type="hidden" name="rejin" value="True">
+                                <button type="submit" class="btn btn-info btn-sm mx-2">Edit</button>
+                              </form>
+
+                              {% comment %} <button onclick="newclick('{{product.id}}')" type="button" class="btn btn-info btn-sm p-0 mx-2 px-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                              id="newid{{product.id}}"
+                              data-id="{{product.id}}"
+                              barcode-id="{{product.barcode_no}}"
+                              manf_date-id="{{product.manufacture_date|date:'Y-m-d'}}"
+                              exp_date-id="{{product.expiry_date|date:'Y-m-d'}}"
+                              name-id="{{product.product_name}}"
+                              brand-id="{{product.brand}}"
+                              tq-id="{{product.total_quantity|floatformat}}"
+                              pq-id="{{product.product_quantity|floatformat}}"
+                              sprice-id="{{product.sale_price}}"
+                              mrp-id="{{product.mrp}}"
+                              pamt-id="{{product.purchase_amount}}"
+                              unit-id="{{product.q_measurements}}"
+                              tq_unit-id="{{product.tq_units}}"
+
+                              >Edit</button>  {% endcomment %}
+                              <a href="{% url 'print_bar' product.id %}" target="_blank"><button type="button" class="btn btn-primary btn-sm mx-2">Print</button></a>
+                              <!-- <button class="btn btn-primary" onclick="window.print()">print</button> -->
+                              {% else %}
+                                <!-- <button class="btn btn-primary" onclick="window.print()">print</button> -->
+                              <a href="{% url 'print_bar' product.id %}" target="_blank"><button type="button" class="btn btn-primary btn-sm mx-2">Print</button></a>
+      
+                              {% endif %}
+                            </div>
+                          </td>
+
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+        </div>
+       
+      </div>
+    </div>
+
+
+
+    <!-- Modal  1-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered border-0" >
+    <div class="modal-content " style="border-bottom-left-radius:
+    20px;border-bottom-right-radius: 20px;">
+      <div class=" text-light p-3 bg-dark ">
+          
+              <div class="d-flex justify-content-between">
+                  <h5 class="modal-title text-center text-light" id="exampleModalLabel"><strong>Edit</strong></h5>
+       
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true"></span>
+                </button>
+              </div>
+                <div class="d-flex justify-content-between  px-3">
+                  <h6 class="text-light">Barcode&nbsp;No&nbsp;:&nbsp;<span id="barcode"></span></h6> 
+              </div>
+      </div>
+     
+      <div class="modal-body ">
+          <form action="{% url 'product_edit' %}" method="POST">
+              {% csrf_token %}
+              <div class="row text-lg-right text-left">
+                  <div class="col-lg-6 mb-2">
+                      <label for="p_name">Product&nbsp;Name&nbsp;:</label>
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <input type="text" class="form-control" name="product_name" value="{{product.product_name}}" id="p_name">
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <label for="brand">Brand&nbsp;:</label>
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <input type="text" class="form-control" name="brand" value="{{product.brand}}" id="brand">
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <label for="manuf_date">Manufacture&nbsp;Date&nbsp;:</label>
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <input type="date" class="form-control" value="{{product.manufacture_date|date:'d-m-Y'}}" name="manufacture_date"  id="manuf_date">
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <label for="expiry_date">Expiry&nbsp;Date&nbsp;:</label>
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <input type="date" class="form-control" name="expiry_date" value="{{product.expiry|date:'d-m-Y'}}" id="expiry_date">
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <label for="total_qty">Total&nbsp;Quantity&nbsp;:</label>
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                     <div class="input-group">
+                      <input type="text" class="form-control decimal_number" name="total_quantity" value="{{product.total_quantity}}" id="total_qty">
+                      <div class="input-group-append">
+                        <select class="form-select" aria-label="Default select example" name="tq_units" id="tqunit">
+                          <option value="Litre">Litre</option>
+                          <option value="Kg">Kg</option>
+                          <option value="Pcs">Pcs</option>
+                        </select>
+                      </div>
+                     </div>
+                  </div>
+                 
+                  <div class="col-lg-6 mb-2">
+                      <label for="product_qty">Product&nbsp;Quantity&nbsp;:</label>
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                     <div class="input-group">
+                      <input type="text" class="form-control decimal_number" name="product_quantity" value="{{product.product_quantity}}" id="product_qty">
+                      <div class="input-group-append">
+                        <select class="form-select" aria-label="Default select example" name="q_measurements" id="units">
+                          <option value="ml">ml</option>
+                          <option value="g">g</option>
+                          <option value="Kg">Kg</option>
+                          <option value="L">L</option>
+                          <option value="Pcs">Pcs</option>
+                        </select>
+                      </div>
+                     </div>
+                  </div>
+              
+                  <div class="col-lg-6 mb-2">
+                      <label for="saleprice">Sale&nbsp;Price&nbsp;:</label>
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <input type="text" class="form-control decimal_number" value="{{product.sale_price}}" name="sale_price"  id="saleprice">
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <label for="mrp">MRP&nbsp;:</label>
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                      <input type="text" class="form-control decimal_number" value="{{product.mrp}}" name="mrp"  id="mrp">
+                  </div>
+                  <div class="col-lg-6 mb-2">
+                    <label for="purchase_amt">Purchase&nbsp;Amount&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <input type="text" class="form-control decimal_number" value="{{product.purchase_amount}}" name="purchase_amount"  id="purchase_amt">
+                </div>
+              </div>
+              <hr class="hr-center">
+              <div class="text-center ">
+                  <input type="hidden" name="id" value="{{product.id}}" id="id">
+                  <input type="hidden" name="rejin" value="True">
+                  <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" id="update_btn" class="btn btn-outline-primary btn-sm">Update</button>
+              </div>
+          </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  {% endblock content %}
+  
+  {% block script %}
+
+
+      $(document).ready(function () {
+        $("#view_products_table").DataTable();
+      });
+
+
+
+
+      function newclick(event){
+                    
+        var crid=$('#newid'+event).attr("data-id");
+        var man_date=$('#newid'+event).attr("manf_date-id");
+        var expiryid=$('#newid'+event).attr("exp_date-id");
+        var nameid=$('#newid'+event).attr("name-id");
+        var brandid=$('#newid'+event).attr("brand-id");
+        var tqid=$('#newid'+event).attr("tq-id");
+        var pqid=$('#newid'+event).attr("pq-id");
+        var spriceid=$('#newid'+event).attr("sprice-id");
+        var mrpid=$('#newid'+event).attr("mrp-id");
+        var pamtid=$('#newid'+event).attr("pamt-id");
+        var barcodeid=$('#newid'+event).attr("barcode-id");
+        var unitsid=$('#newid'+event).attr("unit-id");
+        var tqunitid=$('#newid'+event).attr("tq_unit-id");
+
+
+    
+        $('#id').val(crid);
+        $('#barcode').html(barcodeid);
+        $('#manuf_date').val(man_date);
+        $('#expiry_date').val(expiryid);
+        $('#p_name').val(nameid);
+        $('#brand').val(brandid);
+        $('#total_qty').val(tqid);
+        $('#product_qty').val(pqid);
+        $('#saleprice').val(spriceid);
+        $('#mrp').val(mrpid);
+        $('#purchase_amt').val(pamtid);
+        $('#units').val(unitsid);
+        $('#tqunit').val(tqunitid);
+
+
+
+
+    }
+
+  {% endblock script %}
+

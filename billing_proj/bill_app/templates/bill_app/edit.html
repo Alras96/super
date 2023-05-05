@@ -1,0 +1,156 @@
+{% extends "bill_app/layout.html" %}
+
+
+{% load static %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="card card_form">
+      <div class="card-header card_head text-center bg-dark text-light">Edit Product Details</div>
+
+      <div class="card-body text-center text-md-start">
+        <form action="{% url 'product_edit' %}" method="POST" autocomplete="off">
+            {% csrf_token %}
+            <div class="row text-lg-right text-left">
+                <div class="col-lg-6 mb-2">
+                    <label for="p_name">Barcode&nbsp;Number&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <input readonly type="text" class="form-control" name="" value="{{product.barcode_no}}">
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <label for="p_name">Product&nbsp;Name&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <input type="text" class="form-control" name="product_name" value="{{product.product_name}}">
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <label for="brand">Brand&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <input type="text" class="form-control" name="brand" value="{{product.brand}}">
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <label for="manuf_date">Manufacture&nbsp;Date&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <input type="date" class="form-control" value="{{product.manufacture_date|date:'Y-m-d'}}" name="manufacture_date">
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <label for="expiry_date">Expiry&nbsp;Date&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <input type="date" class="form-control" name="expiry_date" value="{{product.expiry_date|date:'Y-m-d'}}">
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <label for="total_qty">Total&nbsp;Quantity&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                   <div class="input-group">
+                    <input type="text" class="form-control decimal_number"  name="total_quantity" value="{{product.total_quantity|floatformat}}">
+                
+                    <div class="input-group-append">
+                      <select class="form-select" aria-label="Default select example" name="tq_units">
+                        <option selected value="{{product.tq_units}}">{{product.tq_units}}</option>
+                        <option value="Litre">Litre</option>
+                        <option value="Kg">Kg</option>
+                        <option value="Pcs">Pcs</option>
+                      </select>
+                    </div>
+                   </div>
+                  </div>
+            
+                <div class="col-lg-6 mb-2">
+                    <label for="product_qty">Product&nbsp;Quantity&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                  <div class="input-group">
+                    <input type="text" class="form-control decimal_number" name="product_quantity" value="{{product.product_quantity|floatformat}}">
+                
+                    <div class="input-group-append">
+                      <select class="form-select" aria-label="Default select example" name="q_measurements">
+                        <option selected value="{{product.q_measurements}}">{{product.q_measurements}}</option>
+                        <option value="ml">ml</option>
+                        <option value="g">g</option>
+                        <option value="Kg">Kg</option>
+                        <option value="L">L</option>
+                        <option value="Pcs">Pcs</option>
+                      </select>
+                    </div>
+                   </div>
+                   
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <label for="mrp">MRP&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <input type="text" id='mrp' class="form-control decimal_number" value="{{product.mrp|floatformat}}" name="mrp">
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <label for="saleprice">Sale&nbsp;Price&nbsp;:</label>
+                </div>
+                <div class="col-lg-6 mb-2">
+                    <input type="text" id='price' class="form-control decimal_number" value="{{product.sale_price|floatformat}}" name="sale_price">
+                <div class='price_error text-danger text-center'></div>
+                </div>
+               
+                <div class="col-lg-6 mb-2">
+                  <label for="purchase_amt">Purchase&nbsp;Amount&nbsp;:</label>
+              </div>
+              <div class="col-lg-6 mb-2">
+                  <input type="text" class="form-control decimal_number" value="{{product.purchase_amount|floatformat}}" name="purchase_amount">
+              </div>
+            </div>
+            <hr class="hr-center">
+            <div class="text-center ">
+                <input type="hidden" name="id" value="{{product.id}}">
+                <input type="hidden" name="rejin" value="{{rejin}}">
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="history.back()">Back</button>
+                {% comment %} <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">Close</button> {% endcomment %}
+                <button type="submit" id="update_btn" class="btn btn-outline-primary btn-sm">Update</button>
+            </div>
+        </form>
+
+      </div>
+    </div>
+</div>
+    
+{% endblock content %}
+{% block script %}
+$(document).ready(()=>{
+    var price = parseFloat($('#price').val())|| 0
+    var mrp = parseFloat($('#mrp').val())|| 0
+    if(price > mrp){
+        $('.price_error').html('Price should be less than MRP')
+        $('#update_btn').prop('disabled',true)
+    }
+    else{
+         $('.price_error').html('')
+         $('#update_btn').prop('disabled',false)
+    }
+})
+$('#price').keyup(()=>{
+    var price = parseFloat($('#price').val())|| 0
+    var mrp = parseFloat($('#mrp').val())|| 0
+    if(price > mrp){
+        $('.price_error').html('Price should be less than MRP')
+        $('#update_btn').prop('disabled',true)
+    }
+    else{
+         $('.price_error').html('')
+         $('#update_btn').prop('disabled',false)
+    }
+})
+$('#mrp').keyup(()=>{
+    var price = parseFloat($('#price').val())|| 0
+    var mrp = parseFloat($('#mrp').val())|| 0
+    if(price > mrp){
+        $('.price_error').html('Price should be less than MRP')
+        $('#update_btn').prop('disabled',true)
+    }
+    else{
+         $('.price_error').html('')
+         $('#update_btn').prop('disabled',false)
+    }
+})
+{% endblock script %}

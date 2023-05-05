@@ -1,0 +1,117 @@
+{% extends "bill_app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+    <div class="container-fluid mt-3">
+     
+      <div class="card table_card">
+        <!-- <div class="card-header card_head">
+View Product
+        </div> -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table text-center table-bordered" id="expiry_products_table">
+                  <thead class="table_head">
+                    <tr>
+                      <th>S.No</th>
+                      <th>Barcode&nbsp;No</th>
+                      <th>Brand</th>
+                      <th>Product&nbsp;Name</th>
+                      <th>Total&nbsp;Quantity</th>
+                      <th>Stock&nbsp;Quantity</th>
+                      <th>Sold&nbsp;Quantity</th>
+                      <th>Product&nbsp;Quantity</th>
+                      <th>MRP</th>
+                      <th>Sale&nbsp;Amount</th>
+                      <th>Manufacture&nbsp;Date</th>
+                      <th>Expiry&nbsp;Date</th>
+                      {% if user.is_role == 'Admin' or user.is_staff %}
+                        <th>Purchase&nbsp;Amount</th>
+                      {% else %}
+                      {% endif %}
+                      <th>Status</th>
+                      {% if user.is_role == 'Admin' or user.is_staff %}
+                        <th>Action</th>
+                      {% else %}
+                      {% endif %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for product in all_products %}
+
+                      <tr {% if product.stock_quantity <= 0 %} style="color: red;" {% elif product.expiry %} style="color: red;" {% else %} {% endif %}>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{product.barcode_no}}</td>
+                        <td>{{product.brand}}</td>
+                        <td>{{product.product_name}}</td>
+                        <td>{{product.total_quantity|floatformat}}&nbsp;&nbsp;{{product.tq_units}}</td>
+                        <td {% if product.stock_quantity <= 20 %} style="color: red;" {% else %} {% endif %}>{{product.stock_quantity|floatformat}}&nbsp;&nbsp;{{product.tq_units}}</td>
+                        <td>{{product.sold_quantity|floatformat}}&nbsp;&nbsp;{{product.tq_units}}</td>
+                        <td>{{product.product_quantity|floatformat}}&nbsp;&nbsp;{{product.q_measurements}}</td>
+                        <td>{{product.mrp|default_if_none:''}}</td>
+                        <td>{{product.sale_price}}</td>
+                        <td>{{product.manufacture_date|date:'d-m-Y'}}</td>
+                        <td>{{product.expiry_date|date:'d-m-Y'}}</td>
+                        {% if user.is_role == 'Admin' or user.is_staff %}
+                          <td>{{product.purchase_amount}}</td>
+                        {% else %}
+                        {% endif %}
+
+                        {% if product.status and product.expiry and product.out_of_stock %}
+                          <td class="text-danger">Expired&nbsp;&&nbsp;stock&nbsp;out</td>
+                        {% elif product.status and product.out_of_stock %}
+                            <td class="text-danger">Out&nbsp;of&nbsp;stock</td>
+                        {% elif product.status and product.expiry %}
+                            <td class="text-danger">Expired</td>
+                        {% elif product.status %}
+                          <td class="text-success">Live</td>
+                        {% elif product.out_of_stock and product.expiry %}
+                          <td class="text-danger">Expired&nbsp;&&nbsp;stock&nbsp;out</td>
+                        {% elif product.expiry %}
+                          <td class="text-danger">Expired</td>
+                        {% elif product.out_of_stock %}
+                          <td class="text-danger">Out&nbsp;of&nbsp;stock</td>
+                        {% else %}
+                            <td class="text-danger">Not</td>
+                        {% endif %}
+
+                        {% if user.is_role == 'Admin' or user.is_staff %}
+                          <td>
+                            <div class="d-flex">
+                              <form action="{% url 'product_remove' %}" method="POST">
+                                  {% csrf_token %}
+                                  <input type="hidden" name="id" id="" value="{{product.id}}">
+                                  <button type="submit" class="btn btn-outline-danger btn-sm p-0 mx-2 px-2">Remove</button>
+                              </form>
+                            </div>
+                          </td>
+                        {% else %}
+
+                        {% endif %}
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+        </div>
+       
+      </div>
+    </div>
+
+
+
+
+  {% endblock content %}
+  
+  {% block script %}
+
+
+      $(document).ready(function () {
+        $("#expiry_products_table").DataTable();
+      });
+
+
+      
+  {% endblock script %}
+

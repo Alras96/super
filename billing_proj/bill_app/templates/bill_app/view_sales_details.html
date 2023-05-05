@@ -1,0 +1,60 @@
+{% extends "bill_app/layout.html" %}
+
+
+{% load static %}
+
+{% block content %}
+    
+
+  <div class="container-fluid mt-3">
+    <div class="card table_card">
+        {% comment %} <div class="card-header card_head">View Sales Details</div> {% endcomment %}
+        <div class="card-body">
+          <div class="table-responsive">
+            <table
+              class="text-center table table-striped table-bordered"
+              id="sales_table"
+            >
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Date</th>
+                  <th>Bill&nbsp;No</th>
+                  <th>Total&nbsp;Amount</th>
+                  <th>Bill&nbsp;Type</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for onevoice in invoice %}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  <td>{{onevoice.created_at|date:"d/m/Y"}}</td>
+                  <td>{{onevoice.sales_bill_no}}</td>
+                  <td>{{onevoice.grand_total}}</td>
+                  <td>{{onevoice.payment_type}}</td>
+                  <td class="d-flex justify-content-center">
+                    <form action="{% url 'view_bill' %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="id" id="" value="{{onevoice.id}}">
+                      <button type="submit" class="btn btn-dark btn-sm p-0 mx-2 px-2">View</button>
+                    </form>
+                    <a href="{% url 'print_bill' onevoice.id %}" target="_blank"><button type="button" class="btn btn-dark btn-sm p-0 mx-2 px-2">Print</button></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+{% endblock content %}
+
+
+{% block script %}
+      $(document).ready(function () {
+        $("#sales_table").DataTable();
+      });
+{% endblock script %}
+

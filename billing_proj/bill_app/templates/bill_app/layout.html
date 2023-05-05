@@ -1,0 +1,339 @@
+{% load active_link_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Market</title>
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="{% static 'bill_app/css/bootsrap5.2.0.min.css' %}">
+  <!-- Fontawsome  -->
+  <!-- <link rel="stylesheet" href="{% static 'bill_app/font-awesome-4.7.0/css/fontawesome.css' %}"> -->
+<!-- 
+
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>  -->
+
+    <!-- datatable -->
+    <link rel="stylesheet" href="{% static 'bill_app/datatable/datatables.bootstrap5.min.css' %}">
+    <!-- local css -->
+    <link rel="stylesheet" href="{% static 'bill_app/css/style.css' %}">
+</head>
+<body>
+    <div>
+        <nav class="top_nav">
+            <div class="logo_place">
+                <span>Gokul</span>
+              Mini Mart
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <div class='toggle_place' id="vertical-menu-btn">
+                   <div class="icon_img">
+                    <img src="{% static 'bill_app/icons/menu.png' %}" alt="">
+                   </div>
+                </div>
+                <div class="logout_place">
+                    <div class="icon_img">
+                        <img src="{% static 'bill_app/icons/user.png' %}" alt="">
+                       </div>
+                    <div class='logout_drop'>
+                        {% if user.is_role == 'Admin' or user.is_staff %}
+                            <a onclick="passclick('{{user.id}}')" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#passmodel2"
+                            id="newid{{user.id}}"
+                            data-id="{{user.id}}"
+                            name-id="{{user.username}}"
+                            mail-id="{{user.email}}"
+                            >Password&nbsp;Reset</a>
+                        {% else %}
+
+                        {% endif %}
+                        <a href="{% url 'logout' %}">Logout</a> 
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div id="sidebar_section">
+            <ul>
+                {% if user.is_role == 'Admin' or user.is_staff %}
+                <!-- <li class="">
+                    <a href="{% url 'home' %}" class="{% active_link 'home' %}">
+                        <span class="icon"><i class="fas fa-home"></i></span>
+                        <span class="title">Home</span>
+                    </a>
+                </li> -->
+                <li>
+                    <a href="{% url 'view_stock' %}" class="{% active_link 'view_stock' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/inventory.png' %}" alt=""></span>
+                        <span class="title">Inventory</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'bill_page' %}" class="{% active_link 'bill_page' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/bill.png' %}" alt=""></span>
+                        <span class="title">bill&nbsp;page</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'view_sales_details' %}" class="{% active_link 'view_sales_details' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/view.png' %}" alt=""></span>
+                        <span class="title">View&nbsp;sales&nbsp;details</span>
+                    </a>
+                </li> 
+
+                <li>
+                    <a href="{% url 'view_barcode_page' %}" class="{% active_link 'view_barcode_page' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/print.png' %}" alt=""></span>
+                        <span class="title">Print&nbsp;Barcodes</span>
+                    </a>
+                </li> 
+
+                {% comment %} <li>
+                    <a href="{% url 'remove_product_view' %}" class="{% active_link 'remove_product_view' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/delete.png' %}" alt=""></span>
+                        <span class="title">remove&nbsp;product&nbsp;view</span>
+                    </a>
+                </li> {% endcomment %}
+                <li>
+                    <a href="{% url 'expired_product_view' %}" class="{% active_link 'expired_product_view' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/expired.png' %}" alt=""></span>
+                        <span class="title">Expired&nbsp;Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'view_users' %}" class="{% active_link 'view_users' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/users.png' %}" alt=""></span>
+                        <span class="title">view&nbsp;users</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'user_register' %}" class="{% active_link 'user_register' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/add_user.png' %}" alt=""></span>
+                        <span class="title">user&nbsp;register</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'admin_register' %}" class="{% active_link 'admin_register' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/add_admin.png' %}" alt=""></span>
+                        <span class="title">admin&nbsp;register</span>
+                    </a>
+                </li>
+                {% elif user.is_role == 'User' %}
+
+                <li>
+                    <a href="{% url 'bill_page' %}" class="{% active_link 'bill_page' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/bill.png' %}" alt=""></span>
+                        <span class="title">bill&nbsp;page</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'view_stock' %}" class="{% active_link 'view_stock' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/inventory.png' %}" alt=""></span>
+                        <span class="title">Inventory</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'view_barcode_page' %}" class="{% active_link 'view_barcode_page' %}">
+                        <span class="icon"> <img src="{% static 'bill_app/icons/print.png' %}" alt=""></span>
+                        <span class="title">Print&nbsp;Barcodes</span>
+                    </a>
+                </li> 
+                {% else %}
+
+                {% endif %}
+               
+            </ul>
+        </div>
+        <div id="main_menu">
+           
+
+            <div id="main_section">
+              
+
+                    <!-- MESSAGE TAG -->
+                    <div class="messages">
+                        {% if messages %}
+                                            
+                        {% for message in messages %}
+                        <div {% if message.tags %}
+                            class="alert alert-{{ message.tags }} alert-dismissible fade show display__error" {% endif %} role="alert">
+                            <h4 class="err__font"> {{ message }}</h4>
+                        </div>
+                        {% endfor %}
+
+                        {% endif %}
+                    </div>
+
+
+                    {% block content %}
+
+                    {% endblock content %}
+
+
+                    <!-- Modal -->
+                <div class="modal fade" id="passmodel2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header text-light p-3 bg-dark">
+                            <h5 class="modal-title" id="staticBackdropLabel">Update password</h5>
+                            <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{% url 'change_password' %}" method="POST">
+                                <div class="modal-body">
+                                    {% csrf_token %}
+                                    <div class="row text-lg-right text-left">
+                                        <div class="col-lg-6 mb-2">
+                                            <label for="name">Name&nbsp;:</label>
+                                        </div>
+                                        <div class="col-lg-6 mb-2">
+                                            <input type="text" readonly class="form-control" name="name" value="{{user.username}}" id="name">
+                                        </div>
+                                        <div class="col-lg-6 mb-2">
+                                            <label for="phone_number">Email:</label>
+                                        </div>
+                                        <div class="col-lg-6 mb-2">
+                                            <input type="text" readonly class="form-control" name="email" value="" id="mail">
+                                        </div>
+                                        <div class="col-lg-6 mb-2">
+                                            <label for="amount_recieved">Password:</label>
+                                        </div>
+                                        <div class="col-lg-6 mb-2">
+                                            <input type="text" class="form-control" name="password1" value="" id="" required minlength="8">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="hidden" name="user_id" id="id" value="{{user.id}}">
+                                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-outline-dark btn-sm" id="">Confirm</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- model ending -->
+                    
+
+                </div>
+           
+
+        </div>
+    </div>
+
+
+    <script src="{% static 'bill_app/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'bill_app/js/jquery/jquery-3.5.1.js' %}"></script>
+
+    <!-- data table -->
+    <script src="{% static 'bill_app/datatable/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'bill_app/datatable/dataTables.bootstrap5.min.js' %}"></script>
+   
+
+    <script>
+        
+        //toggle section
+        let side_nav = document.querySelector('#sidebar_section')
+        let main_content = document.querySelector('#main_menu')
+        let toggle_btn = document.getElementById('vertical-menu-btn')
+
+        toggle_btn.addEventListener('click',function(){
+
+            side_nav.classList.toggle('open')
+            
+            main_content.classList.toggle('open')
+        // if($('#main_menu').hasClass('open')){
+        //     // alert('rejin')
+        //     $('#vertical-menu-btn i').removeClass('fa-bars')
+        //     $('#vertical-menu-btn i').addClass('fa-box')
+            
+        
+
+        // }
+        // else{
+        //     $('#vertical-menu-btn i').removeClass('fa-box')
+        //     $('#vertical-menu-btn i').addClass('fa-bars')
+        // }
+        })
+        $('.logout_place').click(function(){
+            $('.logout_drop').toggleClass('open')
+        })
+        
+        $('#main_menu').click(function(){
+            $('.logout_drop').removeClass('open')
+        })
+        $('#sidebar_section').click(function(){
+            $('.logout_drop').removeClass('open')
+        })
+
+//number only
+        function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46)
+            return false;
+        return true;
+    }
+//decimal and number only
+
+        $('.decimal_number').keypress(function(event) {
+          if(event.which == 46
+            && $(this).val().indexOf('.') != -1) {
+                event.preventDefault();
+            } // prevent if already decimal point
+            
+            if(event.which != 46 && (event.which < 48 || event.which > 57)) {
+                event.preventDefault();
+            } // prevent if not number/dot
+        });
+
+        $(document).ready(function(){
+    $(this).scrollTop(0);
+        });
+   
+
+        $(".no_decimal").bind("change keyup input", function() {
+    var position = this.selectionStart - 1;
+    //remove all but number and .
+    var fixed = this.value.replace(/[^0-9]/g, "");
+
+    if (this.value !== fixed) {
+      this.value = fixed;
+      this.selectionStart = position;
+      this.selectionEnd = position;
+    }
+  });
+    </script>
+    <script>
+        {% block script %}
+       
+        {% endblock script %}
+    </script>
+    <script>
+        setTimeout(fade_out, 2000);
+            function fade_out() {
+                $(".messages").css('display', 'none');
+                $(".errorholder").fadeOut().empty();
+            } 
+    </script>
+
+    <!-- model script -->
+    <script>
+        function passclick(event){
+                    
+            var crid=$('#newid'+event).attr("data-id");
+            var nameid=$('#newid'+event).attr("name-id");
+            var mailid=$('#newid'+event).attr("mail-id");
+        
+        
+            $('#id').val(crid);
+            $('#name').val(nameid);
+            $('#mail').val(mailid);
+    
+        }
+    </script>
+</body>
+</html>

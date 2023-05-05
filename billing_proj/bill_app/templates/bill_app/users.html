@@ -1,0 +1,144 @@
+{% extends "bill_app/layout.html" %}
+
+
+{% load static %}
+
+{% block content %}
+
+  <div class="container-fluid mt-3">
+    <div class="card table_card">
+        {% comment %} <div class="card-header card_head">View Sales Details</div> {% endcomment %}
+        <div class="card-body">
+          <div class="table-responsive">
+            <table
+              class="text-center table table-striped table-bordered"
+              id="users_table"
+            >
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Password</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in users %}
+                <tr>
+                  <th >{{forloop.counter}}</th>
+                  <td>{{a.username}}</td>
+                  <td>{{a.email}}</td>
+                  <td>{{a.custom_password}}</td>
+                  <td>
+                      {% if a.active %}
+                      <span class="text-success">active</span>
+                      {% else %}
+                      <span class="text-danger">deactive</span>
+                      {% endif %}
+                  </td>
+                  <td>
+                    <div class="d-flex">
+                      {% if a.active %}
+                      <form action="{% url 'disable_view' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{a.id}}">
+                        <button type="submit" class="btn btn-danger btn-sm p-0 mx-2 px-2">disable</button>
+                      </form>
+                      {% else %}
+                      <form action="{% url 'enable_view' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{a.id}}">
+                        <button type="submit" class="btn btn-success btn-sm p-0 mx-2 px-2">enable</button>
+                      </form>
+                      {% endif %}
+
+                      <button onclick="newclick('{{a.id}}')" class="btn btn-dark btn-sm p-0 mx-2 px-2" data-bs-toggle="modal" data-bs-target="#passmodel"
+                      id="newid{{a.id}}"
+                      data-id="{{a.id}}"
+                      name-id="{{a.username}}"
+                      mail-id="{{a.email}}"
+                      >Password&nbsp;Reset</button>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="passmodel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header text-light p-3 bg-dark">
+          <h5 class="modal-title" id="staticBackdropLabel">Update password</h5>
+          <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="{% url 'update_password' %}" method="POST">
+              <div class="modal-body">
+                  {% csrf_token %}
+                  <div class="row text-lg-right text-left">
+                      <div class="col-lg-6 mb-2">
+                          <label for="name">Name&nbsp;:</label>
+                      </div>
+                      <div class="col-lg-6 mb-2">
+                          <input type="text" readonly class="form-control" name="name" value="{{user.username}}" id="name">
+                      </div>
+                      <div class="col-lg-6 mb-2">
+                          <label for="phone_number">Email:</label>
+                      </div>
+                      <div class="col-lg-6 mb-2">
+                          <input type="text" readonly class="form-control" name="email" value="" id="mail">
+                      </div>
+                      <div class="col-lg-6 mb-2">
+                          <label for="amount_recieved">Password:</label>
+                      </div>
+                      <div class="col-lg-6 mb-2">
+                          <input type="text" class="form-control" name="password1" value="" id="" required minlength="8">
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <input type="hidden" name="user_id" id="id" value="{{user.id}}">
+                  <button type="button" class="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-outline-dark btn-sm" id="">Confirm</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+<!-- model ending -->
+
+{% endblock content %}
+
+
+{% block script %}
+      $(document).ready(function () {
+        $("#users_table").DataTable();
+      });
+
+
+
+
+        function newclick(event){
+                    
+            var crid=$('#newid'+event).attr("data-id");
+            var nameid=$('#newid'+event).attr("name-id");
+            var mailid=$('#newid'+event).attr("mail-id");
+        
+        
+            $('#id').val(crid);
+            $('#name').val(nameid);
+            $('#mail').val(mailid);
+    
+        }
+
+{% endblock script %}

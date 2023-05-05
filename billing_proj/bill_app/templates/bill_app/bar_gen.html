@@ -1,0 +1,283 @@
+{% extends "bill_app/layout.html" %}
+
+
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-3">
+    <div class="card card_form">
+      <div class="card-header card_head text-center bg-dark text-light">Barcode&nbsp;Generate&nbsp;Page</div>
+
+      <div class="card-body text-center text-md-start">
+        <form action="{% url 'barcode_generate_view' %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row align-items-center mt-3">
+            <div class="offset-md-2 col-md-4 col-sm-12 col-12">
+              <label class="input_label" for="brandname">Brand Name</label>
+            </div>
+            <div class="col-md-4 col-sm-12 col-12">
+              <input
+                class="form-control"
+                type="text" value="{{form.brand.value |default_if_none:''}}"
+                id="" name="brand"/>
+                {% if form.errors %}
+                <div>
+                    <span class="text-danger">{{form.brand.errors}} </span>
+                </div>
+                {% endif %}
+            </div>
+          </div>
+
+          <div class="row align-items-center mt-3">
+            <div class="offset-md-2 col-md-4 col-sm-12 col-12">
+              <label class="input_label" for="productname"
+                >Product Name</label
+              >
+            </div>
+            <div class="col-md-4 col-sm-12 col-12">
+              <input required
+                class="form-control"
+                type="text"
+                id="" value="{{form.product_name.value |default_if_none:''}}"
+                name="product_name"
+              />
+              {% if form.errors %}
+              <div>
+                  <span class="text-danger">{{form.product_name.errors}} </span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row align-items-center mt-3">
+            <div class="offset-md-2 col-md-4 col-sm-12 col-12">
+              <label class="input_label" for="manufacturing"
+                >Manufacturing Date</label
+              >
+            </div>
+            <div class="col-md-4 col-sm-12 col-12">
+              <input
+                class="form-control"
+                type="date"
+                id="" value="{{form.manufacture_date.value |default_if_none:''}}"
+                name="manufacture_date"
+              />
+              {% if form.errors %}
+              <div>
+                  <span class="text-danger">{{form.manufacture_date.errors}} </span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row align-items-center mt-3">
+            <div class="offset-md-2 col-md-4 col-sm-12 col-12">
+              <label class="input_label" for="expiry">Expiry Date</label>
+            </div>
+            <div class="col-md-4 col-sm-12 col-12">
+              <input class="form-control" type="date" id="" name="expiry_date" value="{{form.expiry_date.value |default_if_none:''}}" />
+              {% if form.errors %}
+              <div>
+                  <span class="text-danger">{{form.expiry_date.errors}} </span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row align-items-center mt-3">
+            <div class="offset-md-2 col-md-4 col-sm-12 col-12">
+              <label class="input_label" for="total_quantity"
+                >Total Quantity</label
+              >
+            </div>
+            <div class="col-md-4 col-sm-12 col-12">
+              <div class="input-group">
+                <input required
+                  class="form-control decimal_number"
+                  type="text"
+                  id="total_quantity" value="{{form.total_quantity.value |default_if_none:''}}"
+                  name="total_quantity"/>
+                  {% if form.errors %}
+                  <div>
+                      <span class="text-danger">{{form.total_quantity.errors}} </span>
+                  </div>
+                  {% endif %}
+
+                  <div class="input-group-append">
+                    <select required
+                      name="tq_units"
+                      class="form-control select_append"
+                      id=""
+                    >
+                    {% if form.tq_units.value %}
+                      <option selected value="{{form.tq_units.value}}">{{form.tq_units.value}}</option>
+                    {% else %}
+                      <option disabled selected value="">select</option>
+                      <option value="Litre">Litre</option>
+                      <option value="Kg">Kg</option>
+                      <option value="Pcs">Pcs</option>
+                    {% endif %}
+                    </select>
+                    {% if form.errors %}
+                    <div>
+                        <span class="text-danger">{{form.tq_units.errors}} </span>
+                    </div>
+                    {% endif %}
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="row align-items-center mt-3">
+            <div class="offset-md-2 col-md-4 col-sm-12 col-12">
+              <label class="input_label" for="quantity"
+                >Product&nbsp;Quantity</label
+              >
+            </div>
+            <div class="col-md-4 col-sm-12 col-12">
+              <div class="input-group">
+                <input required
+                  class="form-control decimal_number"
+                  type="text"
+                  id="" value="{{form.product_quantity.value |default_if_none:''}}"
+                  name="product_quantity"
+                />
+                {% if form.errors %}
+                <div>
+                    <span class="text-danger">{{form.product_quantity.errors}} </span>
+                </div>
+                {% endif %}
+                <div class="input-group-append">
+                  <select required
+                    name="q_measurements"
+                    class="form-control select_append"
+                    id=""
+                  >
+                  {% if form.q_measurements.value %}
+                    <option selected value="{{form.q_measurements.value}}">{{form.q_measurements.value}}</option>
+                  {% else %}
+                    <option disabled selected value="">Select</option>
+                    <option value="ml">ml</option>
+                    <option value="g">g</option>
+                    <option value="Kg">Kg</option>
+                    <option value="L">L</option>
+                    <option value="Pcs">Pcs</option>
+                  {% endif %}
+                  </select>
+                  {% if form.errors %}
+                  <div>
+                      <span class="text-danger">{{form.q_measurements.errors}} </span>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row align-items-center mt-3">
+            <div class="offset-md-2 col-md-4 col-sm-12 col-12">
+              <label class="input_label" for="barcode">MRP</label>
+            </div>
+            <div class="col-md-4 col-sm-12 col-12">
+              <input required class="form-control decimal_number" type="text" id="mrp" name="mrp" value="{{form.mrp.value |default_if_none:''}}" />
+              {% if form.errors %}
+              <div>
+                  <span class="text-danger">{{form.mrp.errors}} </span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row align-items-center mt-3">
+            <div class="offset-md-2 col-md-4 col-sm-12 col-12">
+              <label class="input_label" for="saleprice">Sale Price</label>
+            </div>
+            <div class="col-md-4 col-sm-12 col-12">
+              <input required
+                class="form-control decimal_number"
+                type="text"
+                id="price" value="{{form.sale_price.value |default_if_none:''}}"
+                name="sale_price"
+              />
+              <div class="price_error text-danger text-center"></div>
+              {% if form.errors %}
+              <div>
+                  <span class="text-danger">{{form.sale_price.errors}} </span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row align-items-center mt-3">
+            <div class="offset-md-2 col-md-4 col-sm-12 col-12">
+              <label class="input_label" for="purchase">purchase Price</label>
+            </div>
+            <div class="col-md-4 col-sm-12 col-12">
+              <input class="form-control decimal_number" type="text" id="" name="purchase_amount" value="{{form.purchase_amount.value |default_if_none:''}}" />
+              {% if form.errors %}
+              <div>
+                  <span class="text-danger">{{form.purchase_amount.errors}} </span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <hr class="hr-center" />
+          <div class="text-center my-3">
+            <button type="submit" class="my_btn btn btn-outline-success save_btn">Generate&nbsp;barcode</button>
+            {% if form.errors %}
+              <a href="{% url 'stock_entry' %}"><button type="button" class="my_btn btn btn-outline-danger">Cancel</button></a>
+            {% else %}
+              <button type="reset" class="my_btn btn btn-outline-danger">Cancel</button>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="text-center my-3">
+        <button type="button" class="btn mx-2 btn-outline-info btn-sm" onclick="history.back()">Back</button>
+    </div>
+
+
+  </div>
+
+    
+{% endblock content %}
+{% block script %}
+       
+
+$(document).ready(()=>{
+  $('.save_btn').prop('disabled',true)
+})
+$('#price').keyup(()=>{
+
+  let mrp = parseFloat($('#mrp').val()) || 0;
+  let price = parseFloat($('#price').val()) || 0;
+ if(price > mrp){
+
+  $('.price_error').html('price must be less than MRP')
+  $('.save_btn').prop('disabled',true)
+ }
+ else if(price <= mrp){
+  $('.price_error').html('')
+  $('.save_btn').prop('disabled',false)
+ }
+ else{
+  $('.price_error').html('')
+  $('.save_btn').prop('disabled',true)
+ }
+});
+$('#mrp').keyup(()=>{
+
+  let mrp = parseFloat($('#mrp').val()) || 0;
+  let price = parseFloat($('#price').val()) || 0;
+ if(price > mrp){
+
+  $('.price_error').html('price must be less than MRP')
+  $('.save_btn').prop('disabled',true)
+ }
+ else if(price <= mrp){
+  $('.price_error').html('')
+  $('.save_btn').prop('disabled',false)
+ }
+ else{
+  $('.price_error').html('')
+  $('.save_btn').prop('disabled',true)
+ }
+});
+{% endblock script %}

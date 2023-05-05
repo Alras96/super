@@ -1,0 +1,323 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,400;0,500;0,600;1,100;1,200;1,300&display=swap');
+        @media print {
+            .noprint {
+                visibility: hidden;
+               
+            }
+
+            .rejin {
+                font-family: 'Poppins', sans-serif;
+                margin-top: 0;
+                display: flex;
+                justify-content: space-around;
+                align-items: flex-start;
+
+            }
+        }
+        .rejin img{
+          transform: scale(0.65);
+        }
+        .land {
+            flex-direction: row;
+            width: 200px;
+            height: 100px;
+        }
+        p{
+            line-height:0.25rem;
+            text-transform: uppercase;
+            font-size: 0.50rem;
+            font-weight: 600;
+            display:inline-block;
+            text-align: center;
+        }
+       .content p:nth-child(1){
+        margin-top: -13px;
+
+       }
+     h6{
+        text-align: center;
+      margin: 0 auto;
+      margin-bottom: -18px;
+     }
+     .content{
+        margin-top: -28px;
+        text-align: center;
+     }
+     .noprint {
+        text-align: center;
+     }
+     .noprint .btn{
+background: #fff;
+padding: 7px 14px;
+font-size: 1rem;
+border-radius: 5px;
+border: 2px solid blue;
+outline: none;
+color: blue;
+cursor: pointer;
+letter-spacing: 0.05rem;
+transition: 0.5s ease-in-out;
+     }
+     .noprint .btn:hover{
+        background:blue;
+        color: #fff;
+     }
+    </style>
+
+    <body>
+
+
+ 
+        <div class="rejin">
+            <div style="margin-bottom: 25px;">
+                <h6>Gokul Mini Mart</h6>
+              <img src="{{ gen_product.barcode.url }}"
+                    alt="check" class="land">
+                  <div class="content">
+                    <p>{{product.product_name}}&nbsp;&nbsp;{{product.mrp|floatformat}}&nbsp;/-&nbsp;</p>
+                    <p>PRICE&nbsp;Rs&nbsp;:&nbsp;{{product.sale_price}}</p>
+                  </div>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <h6>Gokul Mini Mart</h6>
+              <img src="{{ gen_product.barcode.url }}"
+                    alt="check" class="land">
+                    <div class="content">
+                        <p>{{product.product_name}}&nbsp;&nbsp;{{product.mrp|floatformat}}&nbsp;/-</p>
+                        <p>PRICE&nbsp;Rs&nbsp;:&nbsp;{{product.sale_price}}</p>
+                      </div>
+            </div>
+        </div>
+      
+
+
+    
+
+        <div class="noprint">
+
+
+        <button type="button" class="btn mx-2 btn-outline-info btn-sm" onclick="history.back()">Back</button>
+    </div> 
+
+
+
+
+
+
+        <script type="text/javascript">
+            PrintPage();
+            function PrintPage() {
+                // window.resizeTo(960, 600);
+                // document.URL = "";
+                // window.location.href = "";
+                // window.print();
+                setTimeout(function () {
+                    window.print();
+                    window.close();
+                }, 500);
+
+            }
+       //   window.onafterprint = function() { console.log('this does not get called');}
+//         function myFunction() {
+//   alert("This document is now being printed");
+// }
+
+
+
+
+
+        </script>
+    </body>
+
+</html> {% endcomment %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,400;0,500;0,600;1,100;1,200;1,300&display=swap');
+        @media print {
+            .noprint {
+                visibility: hidden;
+               
+            }
+
+            .rejin {
+                font-family: 'Poppins', sans-serif;
+                margin-top: 0;
+                display: flex;
+                margin-left: 15px;
+                justify-content: space-around;
+                align-items: flex-start;
+
+            }
+        }
+        .rejin img{
+          transform: scale(0.50);
+          margin-top: -35px;
+        }
+        .land {
+            flex-direction: row;
+            width: 250px;
+            height: 125px;
+        }
+        p{
+            line-height:0.50rem;
+            text-transform: uppercase;
+            font-size: 0.45rem;
+            font-weight: 600;
+            display:inline-block;
+            text-align: center;
+            margin-top: -20px;
+          
+        }
+       .content p:nth-child(1){
+       
+
+       }
+     h6{
+        text-align: center;
+      margin: 0 auto;
+      margin-top: -35px;
+    
+     }
+     .content{
+      margin-top: -10px;
+        text-align: center;
+     }
+     .noprint {
+        text-align: center;
+     }
+     .noprint .btn{
+background: #fff;
+padding: 7px 14px;
+font-size: 1rem;
+border-radius: 5px;
+border: 2px solid blue;
+outline: none;
+color: blue;
+cursor: pointer;
+letter-spacing: 0.05rem;
+transition: 0.5s ease-in-out;
+     }
+     .noprint .btn:hover{
+        background:blue;
+        color: #fff;
+     }
+    </style>
+
+    <body>
+
+
+ 
+        <div class="rejin">
+            <!-- <div style="margin-bottom: 25px;">
+                <h6>Gokul Mini Mart</h6>
+              <img src="{{ gen_product.barcode.url }}"
+                    alt="check" class="land">
+                  <div class="content">
+                    <p>{{product.product_name}}&nbsp;&nbsp;{{product.product_quantity|floatformat}}&nbsp;{{product.q_measurements}}&nbsp;</p>
+                    <p>PRICE&nbsp;Rs&nbsp;:&nbsp;{{product.sale_price}}</p>
+                  </div>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <h6>Gokul Mini Mart</h6>
+              <img src="{{ gen_product.barcode.url }}"
+                    alt="check" class="land">
+                    <div class="content">
+                        <p>{{product.product_name}}&nbsp;&nbsp;{{product.product_quantity|floatformat}}&nbsp;{{product.q_measurements}}&nbsp;</p>
+                        <p>Rs&nbsp;:&nbsp;<del class="mx-2">{{product.mrp|floatformat}}</del>&nbsp;{{product.sale_price}}</p>
+                      </div>
+            </div> -->
+            <div>
+                <div class="content">
+                    <p>{{product.product_name}}&nbsp;&nbsp;{{product.product_quantity|floatformat}}&nbsp;{{product.q_measurements}}&nbsp;</p>
+                    <p>Rs&nbsp;:&nbsp;<del class="mx-2">{{product.mrp|floatformat}}</del>&nbsp;{{product.sale_price}}</p>
+                  </div>
+              <img src="{{ gen_product.barcode.url }}"
+                    alt="check" class="land">
+                 
+                  <h6>Gokul Mini Mart</h6>
+            </div>
+            <div>
+               
+                <div class="content">
+                    <p>{{product.product_name}}&nbsp;&nbsp;{{product.product_quantity|floatformat}}&nbsp;{{product.q_measurements}}&nbsp;</p>
+                    <p>Rs&nbsp;:&nbsp;<del class="mx-2">{{product.mrp|floatformat}}</del>&nbsp;{{product.sale_price}}</p>
+                  </div>
+              <img src="{{ gen_product.barcode.url }}"
+                    alt="check" class="land">
+                    <h6>Gokul Mini Mart</h6>
+            </div>
+        </div>
+      
+
+
+    
+
+        <div class="noprint">
+            <a href="{% url 'barcode_generate_view' %}"> <button type="button" class="btn mx-2 btn-outline-info btn-sm">Back</button></a>
+
+
+
+    </div> 
+
+
+
+
+
+
+        <script type="text/javascript">
+            PrintPage();
+            function PrintPage() {
+                // window.resizeTo(960, 600);
+                // document.URL = "";
+                // window.location.href = "";
+                // window.print();
+                setTimeout(function () {
+                    window.print();
+                    window.close();
+                }, 500);
+
+            }
+       //   window.onafterprint = function() { console.log('this does not get called');}
+//         function myFunction() {
+//   alert("This document is now being printed");
+// }
+
+
+
+
+
+        </script>
+    </body>
+
+</html>

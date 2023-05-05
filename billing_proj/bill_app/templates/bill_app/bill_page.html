@@ -1,0 +1,724 @@
+{% extends "bill_app/layout.html" %}
+{% load static %}
+
+{% block content %}
+    <style>
+      html{
+        scroll-behavior: smooth;
+        user-select: none;
+      }
+      .bill_table_input {
+        min-width: 200px;
+      }
+      .select_appearence{
+        appearance: auto;
+      }
+    </style>
+
+    <div class="container-fluid mt-3">
+      <div class="card">
+        <!-- <div class="card-header text-light text-center bg-danger">
+          <h3>Product</h3>
+        </div> -->
+     
+        <div class="card-body text-center p-2">
+          <form action="" method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="obj_id" class="form-control text-center my-2" />
+            <div
+              class="d-flex text-center justify-content-center"
+              style="flex-wrap: wrap"
+            >
+              <div class="mx-2">
+                <label for=""> <strong>Product Barcode</strong></label>
+                <input
+                  type="text"
+                  class="form-control text-center my-2 bill_table_input"
+                  id="barcode"
+                />
+                <div class="barcode_error text-danger"></div>
+              </div>
+              <div class="mx-2">
+                <label for=""> <strong>Product Name</strong></label>
+                <input
+                readonly
+                  type="text"
+                  id="product_name"
+                  class="form-control text-center my-2 bill_table_input"
+                />
+                <div class='product_error text-danger text-center'></div>
+              </div>
+              <div class="mx-2">
+                <label for=""> <strong>Quantity</strong></label>
+                <input
+                  type="text"
+                  id="quantity"
+                  class="form-control text-center my-2 bill_table_input no_decimal"
+                  value = 1
+                  
+                />
+                <input type="hidden" id="available_qty">
+                <div class="quantity_error text-danger"></div>
+              </div>
+              <div class="mx-2">
+                <label for=""><strong>MRP</strong></label>
+                <input
+                  type="text"
+                  readonly
+                  id="mrp"
+                  class="form-control text-center my-2 bill_table_input decimal_number "
+                />
+                <div class='text-danger mrp_error'></div>
+              </div>
+              <div class="mx-2">
+                <label for=""><strong>Price</strong></label>
+                <input
+                  type="text"
+                  readonly
+                  id="price"
+                  class="form-control text-center my-2 bill_table_input decimal_number"
+                />
+                <div class='text-danger price_error'></div>
+              </div>
+              <div class="mx-2">
+                <label for=""><strong>Total Amount </strong></label>
+                <input
+                  type="text"
+                  readonly
+                  id="total_amount"
+                  class="form-control text-center my-2 bill_table_input decimal_number"
+                />
+              </div>
+            </div>
+            <div class="total_error text-danger text-center"></div>
+            <div class="text-center my-3">
+              <button type="button" id="OnSubmit" class="btn btn-dark">
+                Add
+              </button>
+              <button type="button" id='reset_form' class="btn btn-light">
+                Reset
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="card p-2 mt-3">
+        <form action="" method="POST">
+        <div class="row">
+          <div class="offset-sm-8 text-center col-sm-4 my-3">
+            <label for=""><strong>Select Mode</strong></label>
+            <select name="" class="form-control select_appearence my-2" id="payment_mode">
+              <option value="Cash">Cash</option>
+              <option value="Card">Card</option>
+              <option value="UPI">UPI</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-responsive">
+       
+            {% csrf_token %}
+          <table
+            class="table table-bordered table-striped text-center"
+            id="bill_table"
+          >
+            <thead >
+              <tr>
+                <th>S.No</th>
+                <th>Barcode</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>MRP</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+              <td colspan="6" class="text-end"><strong>Total</strong></td>
+              <td>
+                <div class="total_display"></div>
+                <input type="hidden" id="total_all" />
+              </td>
+            </tfoot>
+          </table>
+       
+        </div>
+        <div class="row">
+          <div class="offset-sm-6 col-sm-6">
+            <div class="card text-center p-2 mt-3">
+              <label for=""><strong>Total Amount</strong></label>
+              <input type="text" readonly  class="form-control mt-2 text-center" id="total_amt_to_pay">
+              <label for=""><strong>Total Quantity</strong></label>
+              <input type="text" readonly  class="form-control mt-2 text-center" id="total_qty">
+          <label for=""><strong>Amount Paid</strong></label>
+          <input type="text" onkeypress="return isNumberKey(event)" class="form-control mt-2 text-center no_decimal" id="amt_paid">
+          <label for=""><strong>Balance</strong></label>
+          <input type="text" readonly class="form-control mt-2 text-center" id="balance_amt">
+            </div>
+          </div>
+        </div>
+        <div class="All_details_submit text-center text-danger"></div>
+        <hr class="hr-center">
+        <div class="text-center my-3">
+          <button type="button" class="btn btn-dark" id="doctor-submit">
+            Save and Print
+          </button>
+        </div>
+      </form>
+     
+      </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+$('#reset_form').click(()=>{
+                $('.barcode_error').html('')
+                $('.price_error').html('')
+                $('.mrp_error').html('')
+                $('.quantity_error').html('')
+                $('.product_error').html('')
+                $("#barcode").val("");
+                $("#product_name").val("");
+                $("#quantity").val(1);
+                $("#price").val(0);
+                $("#mrp").val(0);
+                $("#total_amount").val(0);
+                $('#available_qty').val(0);
+                $("#barcode").prop('readonly', false);
+                $('#barcode').focus();
+
+})
+$(document).ready(()=>{
+  $('.barcode_error').html('')
+  $('.price_error').html('')
+  $('.mrp_error').html('')
+  $('.quantity_error').html('')
+  $('.product_error').html('')
+  $("#barcode").val("");
+  $("#product_name").val("");
+  $("#quantity").val(1);
+  $("#price").val(0);
+  $("#mrp").val(0);
+  $("#total_amount").val(0);
+  $('#available_qty').val(0);
+  $("#barcode").prop('readonly', false);
+  $('#barcode').focus();
+});
+ $("#bill_table").on('click','.btnDelete',function(){
+        
+       var price = $(this).closest('tr').find('.total_on_tr').val();
+       <!-- console.log(price) -->
+         var total = $('#total_all').val()
+         <!-- console.log(total) -->
+         $('#total_all').val(total - price)
+         var total_all = $('#total_all').val()
+         <!-- console.log(total_all) -->
+
+
+        $('#total_amt_to_pay').val(total_all)
+         $('.total_display').text(total_all)
+         $(this).closest('tr').remove();
+      });
+
+      $(document).ready(() => {
+        $("#barcode").focus();
+        $('#product_name').click(()=>{
+          if($('#barcode').val() == ""){
+            $('.barcode_error').html('')
+          $("#product_name").prop('readonly', false);
+          $("#barcode").prop('readonly', true);
+          $("#quantity").prop('readonly', false);
+          $("#price").prop('readonly', false);
+          $("#mrp").prop('readonly', false);
+          $("#total_amount").prop('readonly', true);
+          }
+          else{
+            $("#product_name").prop('readonly', true);
+            $("#barcode").prop('readonly', false);
+            $("#quantity").prop('readonly', false);
+            $("#price").prop('readonly', true);
+            $("#mrp").prop('readonly', true);
+            $("#total_amount").prop('readonly', true);
+          }
+      
+      })
+      $('#barcode').click(()=>{
+       if($('#product_name').val() == ""){
+        $("#product_name").prop('readonly', true);
+        $("#barcode").prop('readonly', false);
+        $("#quantity").prop('readonly', false);
+        $("#price").prop('readonly', true);
+        $("#mrp").prop('readonly', true);
+        $("#total_amount").prop('readonly', true);
+     
+       }
+       else{
+        $("#product_name").prop('readonly', false);
+        $("#barcode").prop('readonly', true);
+        $("#quantity").prop('readonly', false);
+        $("#price").prop('readonly', false);
+        $("#mrp").prop('readonly', false);
+        $("#total_amount").prop('readonly', true);
+       }
+    
+    })
+      $('#product_name').change(()=>{
+        if($("#product_name").val() !== ""){
+          $("#barcode").prop('readonly', true);
+          $("#quantity").prop('readonly', false);
+          $("#price").prop('readonly', false);
+          $("#mrp").prop('readonly', false);
+          $("#total_amount").prop('readonly', true);
+        }
+       
+          else if($("#product_name").val() === ""){
+            $("#barcode").prop('readonly', true);
+            $("#product_name").prop('readonly', false);
+            $("#quantity").prop('readonly', true);
+            $("#price").prop('readonly', false);
+            $("#mrp").prop('readonly', false);
+            $("#total_amount").prop('readonly', true);
+          
+        }
+      })
+      });
+      
+      $("#barcode").change(() => {
+        var val = $("#barcode").val();
+        const consulting = consultingTableForm();
+        const my_arr = consulting.Invoice
+     
+        const rejin = my_arr.map((rej)=>{
+          return(rej.Barcode)
+        })
+        const is_there = rejin.find(element => element == val)
+        console.log(is_there)
+        if(val == ''){
+        //  alert('please enter barcode')
+        }
+        else if(val === is_there){
+          if(val == ''){
+alert('barcode but empty')
+          }
+          else{
+          alert('product added already')
+          $("#barcode").val("");
+          $("#product_name").val("");
+          $("#quantity").val(1);
+          $("#price").val(0);
+          $("#mrp").val(0);
+          $("#total_amount").val(0);
+          $('#available_qty').val(0);
+          $('#barcode').focus();
+        }
+      }
+        else{
+        if (checkExistsInput($("#barcode").val()) === true) {
+          // alert($("#barcode").val());
+
+          var gg = $("#barcode").val();
+          $.ajax({
+            type: "POST",
+            url: "{% url 'check_api' %}",
+            dataType: "json",
+            headers: {
+              "X-CSRFToken": $("input[name=csrfmiddlewaretoken]").val(),
+            },
+            data: {
+              barcode_no: gg,
+            },
+            success: function (response) {
+              <!-- console.log(response); -->
+              if (response.noname == "empty") {
+                <!-- console.log("empty"); -->
+                $("#product_name").val("");
+                $("#price").val(0);
+                $("#mrp").val(0);
+                $("#obj_id").val("");
+                $('.barcode_error').html('barcode not available')
+                $('.quantity_error').html('')
+              } else {
+                <!-- console.log("full"); -->
+                $("#product_name").val(response.product_name);
+                $("#price").val(response.price);
+                $("#mrp").val(response.mrp);
+                $("#obj_id").val(response.obj_id);
+                $('#available_qty').val(response.stock_qty)
+                var quantity = $("#quantity").val();
+                var price = $("#price").val();
+                $('.barcode_error').html('')
+                
+                $("#total_amount").val(quantity * price) || 0;
+            
+              }
+            },
+            error: function (response) {
+             
+              console.log(response);
+              
+            },
+          });
+        } else {
+        }
+      }
+    
+      });
+      $("#product_name").change(()=>{
+        name = $("#product_name").val()
+        if(name == ''){
+          $('.product_error').html('please enter valid product name')
+        }
+        else{
+          $('.product_error').html('')
+        }
+      })
+
+      $("#quantity").keyup(() => {
+        var quantity = $("#quantity").val();
+        var price = $("#price").val();
+
+        $("#total_amount").val(quantity * price) || 0;
+      });
+      $("#price").keyup(() => {
+        var quantity = $("#quantity").val();
+        var price = parseFloat($("#price").val());
+        var mrp = parseFloat($("#mrp").val());
+
+        $("#total_amount").val(quantity * price) || 0;
+     
+         if(price > mrp){
+          $('.price_error').html("price must be less than MRP")
+        }
+          else if($("#price").val() > 0){
+          $('.price_error').html("")
+        }
+      });
+      $("#mrp").keyup(() => {
+       
+        var mrp = $("#mrp").val();
+
+      
+        if($("#mrp").val() > 0){
+          $('.mrp_error').html("")
+        }
+        else{
+
+        }
+      });
+      $("#OnSubmit").click(() => {
+        // alert("gfrfuytr");
+
+        var available = $('#available_qty').val();
+        var barcode = $("#barcode").val();
+        var product_name = $("#product_name").val();
+        var quantity = parseFloat($("#quantity").val()) || 0;
+        var price = parseFloat($("#price").val());
+        var mrp = parseFloat($("#mrp").val());
+
+        var total_amount = parseFloat($("#total_amount").val());
+
+        // alert(barcode + product_name + quantity + price + total_amount);
+if(barcode === ''){
+
+ if(price < 1 && quantity < 1 && mrp < 1 && product_name == '')
+  {
+  
+    $('.quantity_error').html('please enter quantity')
+    $('.price_error').html("please enter price")
+    $('.mrp_error').html("please enter MRP")
+    $('.product_error').html('please enter product name')
+  }
+  else if(price < 1 && mrp < 1 && product_name == '')
+  {
+  
+ 
+    $('.price_error').html("please enter price")
+    $('.mrp_error').html("please enter MRP")
+    $('.product_error').html('please enter product name')
+  }
+  else if(price < 1 && quantity < 1 && mrp < 1)
+  {
+  
+    $('.quantity_error').html('please enter quantity')
+    $('.price_error').html("please enter price")
+    $('.mrp_error').html("please enter MRP")
+   
+  }
+  else if(price < 1 && quantity < 1 )
+  {
+  
+    $('.quantity_error').html('please enter quantity')
+    $('.price_error').html("please enter price")
+   
+  }
+ else if( quantity < 1 && mrp < 1)
+  {
+  
+    $('.quantity_error').html('please enter quantity')
+    
+    $('.mrp_error').html("please enter MRP")
+  }
+  if(price < 1 && mrp < 1)
+  {
+  
+    $('.price_error').html("please enter price")
+    $('.mrp_error').html("please enter MRP")
+  }
+  else if(mrp < 1){
+   
+    $('.mrp_error').html("please enter MRP")
+  }
+  else if(price < 0){
+    $('.price_error').html("please enter price")
+  }
+
+  else if(quantity < 1){
+    $('.quantity_error').html('please enter quantity')
+  }
+   else if(price > mrp){
+          $('.price_error').html("price must be less than MRP")
+        }
+      else  if(product_name == ''){
+          $('.product_error').html('please enter product name')
+        }
+        else if(isNaN(total_amount)){
+          $('.total_error').html("please enter valid credentials")
+        }
+        else if(isNaN(price)  && isNaN(mrp) )
+        {
+        
+       
+          $('.price_error').html("please enter price")
+          $('.mrp_error').html("please enter MRP")
+          $('.product_error').html('please enter product name')
+        }
+     else if(isNaN(mrp)){
+      $('.mrp_error').html("please enter MRP")
+     }
+     else if(isNaN(price)){
+      $('.price_error').html("please enter price")
+     }
+   
+  else{
+  $("#bill_table").append(
+    `<tr><td>#</td><td>${barcode}</td><td>${product_name}</td><td>${quantity}</td><td>${mrp}</td><td><input type="hidden" class="price_on_tab" value="${price}">${price}</td><td><input type="hidden" class="total_on_tr" value="${total_amount}">${total_amount}</td><td><div class="btnDelete"><img src="{% static 'bill_app/icons/delete_red.png' %}" alt=""></div></td></tr>`
+  );
+  const consulting = consultingTableForm();
+  var arr = consulting.Invoice;
+  var qty = arr.map((rejin)=>{
+    return(rejin.Quantity)
+  })
+  console.log(qty)
+  var sum = 0
+  var numberArray = [];
+  for(let i = 0; i < qty.length; i++){
+    numberArray.push(parseInt(qty[i]));
+    console.log(numberArray)
+    sum += parseInt(numberArray[i]);
+   
+ }
+ console.log(sum)
+$('#total_qty').val(sum);
+
+  $('#total_qty').val();
+  $('.product_error').html('')
+  $('.quantity_error').html('')
+  $('.barcode_error').html('')
+  $('.price_error').html("")
+  $('.mrp_error').html("")
+  $('.total_error').html("")
+ 
+  var total_all = parseFloat($("#total_all").val()) || 0;
+  var All_total = total_all + total_amount;
+
+  $('#total_amt_to_pay').val(All_total);
+  $(".total_display").text(All_total);
+  $("#total_all").val(All_total);
+  $("#barcode").val("");
+  $("#product_name").val("");
+  $("#quantity").val(1);
+  $("#price").val(0);
+  $("#mrp").val(0)
+  $("#total_amount").val(0);
+  $('#available_qty').val(0);
+ 
+  $("#barcode").focus();
+  $("#product_name").prop('readonly', true);
+  $("#barcode").prop('readonly', false);
+  $("#quantity").prop('readonly', true);;
+  $("#price").prop('readonly', true);;
+  $("#total_amount").prop('readonly', true);;
+}
+}
+else{
+  if(quantity > available && barcode ==="")
+{
+  $('.quantity_error').html(`only ${available} available`)
+  $('.barcode_error').html("please enter valid barcode")
+}
+else if(quantity > available){
+$('.quantity_error').html(`only ${available} available`)
+}
+else if(barcode === ""){
+  $('.barcode_error').html("please enter valid barcode")
+}
+else if(quantity < 1){
+  $('.quantity_error').html('please enter quantity')
+}
+else{
+  
+  $("#bill_table").append(
+    `<tr><td>#</td><td>${barcode}</td><td>${product_name}</td><td>${quantity}</td><td>${mrp}</td><td><input type="hidden" class="price_on_tab" value="${price}">${price}</td><td><input type="hidden" class="total_on_tr" value="${total_amount}">${total_amount}</td><td><div class="btnDelete"><img src="{% static 'bill_app/icons/delete_red.png' %}" alt=""></div></td></tr>`
+  );
+  const consulting = consultingTableForm();
+  var arr = consulting.Invoice;
+  var qty = arr.map((rejin)=>{
+    return(rejin.Quantity)
+  })
+  console.log(qty)
+  var sum = 0
+  var numberArray = [];
+  for(let i = 0; i < qty.length; i++){
+    numberArray.push(parseInt(qty[i]));
+    console.log(numberArray)
+    sum += parseInt(numberArray[i]);
+   
+ }
+ console.log(sum)
+$('#total_qty').val(sum);
+
+
+  var total_all = parseFloat($("#total_all").val()) || 0;
+  var All_total = total_all + total_amount;
+
+  $('#total_amt_to_pay').val(All_total);
+  $(".total_display").text(All_total);
+  $("#total_all").val(All_total);
+  $("#barcode").val("");
+  $("#product_name").val("");
+  $("#quantity").val(1);
+  $("#price").val(0);
+  $("#mrp").val(0);
+  $("#total_amount").val(0);
+  $('#available_qty').val(0);
+  $('.product_error').html('')
+  $('.quantity_error').html('')
+  $('.barcode_error').html('')
+  $('.price_error').html("")
+  $('.mrp_error').html("")
+  $('.total_error').html("")
+  $("#barcode").focus();
+ 
+}
+}
+      });
+
+      //consulting Table
+
+      function consultingTableForm() {
+        var myRows = [];
+        var headersText = [];
+        var $headers = $("#bill_table th");
+<!-- console.log($headers) -->
+        // Loop through grabbing everything
+        var $rows = $("#bill_table tbody tr").each(function (index) {
+          $cells = $(this).find("td");
+          myRows[index] = {};
+
+          $cells.each(function (cellIndex) {
+            // Set the header text
+            if (headersText[cellIndex] === undefined) {
+              headersText[cellIndex] = $($headers[cellIndex]).text();
+              <!-- console.log(headersText[cellIndex]) -->
+            }
+            // Update the row object with the header/cell combo
+            myRows[index][headersText[cellIndex]] = $(this).text();
+          });
+        });
+
+        // Let's put this in the object like you want and convert to JSON (Note: jQuery will also do this for you on the Ajax request)
+        var myObj = {
+          Invoice: myRows,
+          Total_Amt:$('#total_all').val(),
+          paymentt_mode:$('#payment_mode').val(),
+          amt_paid:$('#amt_paid').val(),
+          balance:$('#balance_amt').val(),
+        };
+console.log(myObj,'Obj')
+        return myObj;
+      }
+//balance amt show
+
+$('#amt_paid').keyup(()=>{
+  var total = $('#total_amt_to_pay').val();
+  var paid = $('#amt_paid').val()
+  $('#balance_amt').val(-(total - paid))
+})
+
+
+      $("#doctor-submit").click(function () {
+        // Consulting Table
+        var consulting_rowCount = $("#bill_table > tbody > tr").length;
+        const consulting = consultingTableForm();
+        <!-- console.log(consulting); -->
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'bill_submit' %}",
+            dataType: "json",
+            headers: {
+              "X-CSRFToken": $("input[name=csrfmiddlewaretoken]").val(),
+            },
+          
+            data: JSON.stringify({invoice:  {
+              consulting,
+            }}),
+            success: function (response) {
+              <!-- console.log(response); -->
+               if (response.martian == "empty") {
+                 console.log("empty");
+                $('.All_details_submit').html('Please Enter Valid Credentials')
+               } else {
+               
+                 $('#total_amt_to_pay').val('');
+                 $('#amt_paid').val('')
+                 $('#balance_amt').val('')
+                 $("table#bill_table tbody").remove();
+                 $(".total_display").text(0);
+                 $("#total_all").val(0);
+                 $("#barcode").focus();
+                 var inv_id = response.bill_id
+
+                 console.log('Success')
+                 window.open(`print_bill/${inv_id}`,'_blank')
+                 window.location.reload();
+               }
+             
+            },
+            error: function (response) {
+             
+              console.log(response);
+            },
+          });
+     
+        
+        // window.location.replace('/home')
+      });
+
+      // ==========   Company Name Search ========
+      function checkExistsInput(inputValue) {
+        <!-- console.log(inputValue); -->
+
+        var x = document.getElementById("barcode");
+        var i;
+        var flag = true;
+        // for (i = 0; i < x.options.length; i++) {
+        // 	if(inputValue == x.options[i].value){
+        // 		flag = true;
+        // 	}
+        // }
+        return flag;
+      }
+
+ 
+{% endblock script %}

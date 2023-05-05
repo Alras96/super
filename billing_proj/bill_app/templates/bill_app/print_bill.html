@@ -1,0 +1,307 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <!-- bootstrap -->
+     <link rel="stylesheet" href="{% static 'bill_app/css/bootsrap5.2.0.min.css' %}">
+    <style>
+      @media print{
+        table { page-break-after:auto }
+  tr    { page-break-inside:avoid; page-break-after:auto }
+  td    { page-break-inside:avoid; page-break-after:auto }
+  thead { display:table-header-group }
+  tfoot { display:table-footer-group }
+      }
+        *{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+        }
+        div{
+            text-align: center;
+            height: fit-content;
+            font-family: sans-serif;
+        }
+        h1{
+            display: inline-block;
+            background-color: #000;
+            padding: 10px 20px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            color: #fff;
+         
+        }
+        p{
+            margin: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 0.25rem;
+            text-transform: capitalize;
+        }
+        thead tr{
+          border-top: 1px dotted #000;
+          border-bottom: 1px dotted #000;
+        }
+        thead tr th{
+          font-size: 0.75rem;
+          padding: 0 10px;
+          font-weight: 600;
+        }
+        tr{
+          border-bottom: 1px dotted #000;
+        }
+        tbody tr td{
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+        tfoot tr td{
+          font-size: 0.75rem;
+          font-weight: 800;
+        }
+        h6{
+          font-size: 1rem;
+          font-weight: 700;
+        }
+    </style>
+</head>
+<body >
+    <div class="">
+        <h1>Gokul Mini Mart</h1>
+        <p>Kanchiramkattu&nbsp;vilai,&nbsp;Pootteti&nbsp;post,&nbsp;Paloor,</p>
+       <p>KARUNGAL-629157</p>
+       <!-- extra adding -->
+       <p>Phone&nbsp;:&nbsp;9360671773&nbsp;,&nbsp;Tel&nbsp;:&nbsp;04651-244093</p>
+
+       
+        <!-- <a href="javascript:window.print();">Print</a> -->
+
+
+
+
+        {% comment %} bill {% endcomment %}
+
+        <div class="container-fluid">
+         
+                <div>
+                  <div class="row">
+                    <div class="col-6">
+                      <div class="row">
+                        <div class="col-5">
+                          <p class="text-end">
+                            from&nbsp;:
+                          </p>
+                        </div>
+                        <div class="col-7">
+                          <p class="text-start">
+                            {{get_invoice.user.username}}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                
+                   
+                    <div class="col-6">
+                      <div class="row">
+                        <div class="col-5">
+                          <p class="text-end">
+                            Date&nbsp;:
+                          </p>
+                        </div>
+                        <div class="col-7">
+                          <p class="text-start">
+                            {{get_invoice.created_at|date:"d/m/Y"}}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="row">
+                        <div class="col-5">
+                          <p class="text-end">
+                            bill&nbsp;Type&nbsp;:
+                          </p>
+                        </div>
+                        <div class="col-7">
+                          <p class="text-start">
+                            {{get_invoice.payment_type}}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="row">
+                        <div class="col-5">
+                          <p class="text-end">
+                            Time&nbsp;:
+                          </p>
+                        </div>
+                        <div class="col-7">
+                          <p class="text-start">
+                            {{get_invoice.created_at|date:"g:i"}}&nbsp;{{get_invoice.created_at|date:"a"}}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="row">
+                        <div class="col-5">
+                          <p class="mr-3 text-end">
+                            bill&nbsp;No&nbsp;:
+                          </p>
+                        </div>
+                        <div class="col-7">
+                          <p class="text-start">
+                            {{get_invoice.sales_bill_no}}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                 
+          
+              
+          
+                
+                </div>
+             
+                <h6>CASH-BILL</h6>
+                   
+                      <table
+                        class="text-center "
+                        
+                      >
+                        <thead>
+                          <tr>
+                           
+                            <th>Product&nbsp;Name</th>
+                            <th>Quantity</th>
+                            <th>MRP</th>
+                            <th>Price</th>
+                            <th>Total&nbsp;Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for sales_product in sales_product_object %}
+                          <tr>
+                            
+                          {% if sales_product.product %}
+                            <td>{{sales_product.product.brand|title}}&nbsp;{{sales_product.product.product_name|title}}</td>
+                          {% else %}
+                            <td>{{sales_product.enter_product|title}}</td>
+                          {% endif %}
+
+                            <td>{{sales_product.sale_quantity|floatformat}}</td>
+                            <td>{{sales_product.mrp}}</td>
+                            <td>{{sales_product.price}}</td>
+                            <td>{{sales_product.total_amount}}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <!-- new adding -->
+                            <td class="">
+                              TOTAL&nbsp;Items
+                            </td>
+                            <td>
+                              {{get_invoice.total_items|floatformat}}
+                            </td>
+                            <!-- end -->
+                            <td class=""  colspan="2">
+                              TOTAL
+                            </td>
+                            <td style="text-align:center;" >
+                              {{get_invoice.grand_total}}
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+
+
+                      <div class="row">
+                        <!-- extra -->
+                        <div class="col-8">
+                          <div class="row">
+                            <div class="col-6">
+                              <p class="text-end">
+                                <strong>Your&nbsp;Savings&nbsp;:</strong> 
+                              </p>
+                            </div>
+                            <div class="col-6">
+                              <p class="text-start">
+                                <strong>{{get_invoice.savings}}</strong>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                       <!-- end -->
+                        <div class="col-8">
+                          <div class="row">
+                            <div class="col-6">
+                              <p class="text-end">
+                                Amount&nbsp;Received&nbsp;:
+                              </p>
+                            </div>
+                            <div class="col-6">
+                              <p class="text-start">
+                                {{get_invoice.amount_received}}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-8"></div>
+                        <div class="col-8">
+                          <div class="row">
+                            <div class="col-6">
+                              <p class="text-end">
+                               Balance&nbsp;Return&nbsp;:
+                              </p>
+                            </div>
+                            <div class="col-6">
+                              <p class="text-start">
+                                {{get_invoice.balance_return}}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                
+           
+    </div>
+
+
+ 
+    <script type="text/javascript">
+         PrintPage();
+        function PrintPage() {
+            // window.resizeTo(960, 600);
+            // document.URL = "";
+            // window.location.href = "";
+            // window.print();
+            setTimeout(function () {
+        window.print();
+        window.close();
+    }, 500); 
+          
+        }
+        //   window.onafterprint = function() { console.log('this does not get called');}
+//         function myFunction() {
+//   alert("This document is now being printed");
+// }
+
+      
+           
+        
+
+    </script>   
+</body>
+</html>
